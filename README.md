@@ -37,7 +37,7 @@ It then:
 ### Build from source
 
 ```bash
-git clone https://github.com/your-username/doo.git
+git clone https://github.com/eloid-novela/doo.git
 cd doo
 mkdir build && cd build
 cmake ..

@@ -1,0 +1,14 @@
+[Unit]
+Description=Doo network data cap monitor
+After=NetworkManager.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/doo --config /etc/doo/doo.json
+Restart=on-failure
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

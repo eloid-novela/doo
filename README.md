@@ -1,6 +1,6 @@
-# Doo 
+# Doo
 
-**Doo** is a lightweight Linux tool for monitoring and enforcing internet data caps on Ubuntu.
+**Doo** is a lightweight Linux service for monitoring network usage and enforcing a configured data cap.
 
 It helps you keep track of your network usage and automatically limits or blocks internet access when a defined data quota is reached.
 
@@ -9,63 +9,65 @@ It helps you keep track of your network usage and automatically limits or blocks
 ## Features
 
 - Real-time network usage monitoring
-- Monthly/daily data caps
-- Automatic internet blocking when limit is reached
-- Persistent usage tracking across reboots
-- Simple configuration via JSON
-- Built for Linux (Ubuntu focused)
+- Daily, weekly, and monthly cap profiles
+- Automatic NetworkManager shutdown when the cap is reached
+- JSON configuration with validation
+- One-shot checks for automation and diagnostics
+- Native CMake, systemd, Docker, and Docker Compose support
 
 ---
 
 ## How it works
 
-Doo reads network statistics directly from Linux system interfaces:
+Doo reads cumulative network statistics directly from Linux system interfaces:
 
 - `/sys/class/net/<interface>/statistics/rx_bytes`
 - `/sys/class/net/<interface>/statistics/tx_bytes`
 
-It then:
-1. Tracks total upload + download
-2. Stores usage persistently
-3. Compares against your configured limit
-4. Disables network access when the limit is reached
+It adds received and transmitted bytes for the configured interface and compares the result with the cap. When the cap is reached, Doo calls NetworkManager to disable networking.
 
 ---
 
 ## Installation
 
-### Build from source
+### Build from source with CMake
 
 ```bash
 git clone https://github.com/eloid-novela/doo.git
 cd doo
-mkdir build && cd build
-cmake ..
-make
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build
+ctest --test-dir build --output-on-failure
 ````
+
+The binary is written to `build/doo` (or `build/doo.exe` on Windows). Network statistics and NetworkManager integration require Linux.
 
 ---
 
 ## Configuration
 
-Example `configs/doo.json`:
+The default configuration is `configs/doo.json`:
 
 ```json
 {
   "limit_gb": 5,
   "period": "monthly",
-  "interface": "wlan0",
-  "poll_interval_seconds": 10
+  "interface": "eth0",
+  "poll_interval_seconds": 60
 }
 ```
+
+`limit_gb` uses decimal gigabytes. Valid periods are `daily`, `weekly`, and `monthly`. The current monitor reads the Linux cumulative counters for the configured interface.
 
 ---
 
 ## Usage
 
 ```bash
-./doo
+./build/doo --config configs/doo.json
 ```
+
+Use `--once` to check the current usage and exit, or `--help` to list all options.
 
 Or with systemd:
 
@@ -73,6 +75,17 @@ Or with systemd:
 sudo systemctl enable doo.service
 sudo systemctl start doo.service
 ```
+
+After installation, copy the sample configuration to `/etc/doo/doo.json` and adjust the interface name. The service needs root privileges because it controls NetworkManager.
+
+### Docker Compose
+
+```bash
+docker compose up --build -d
+docker compose logs -f doo
+```
+
+The Compose service uses host networking, the host D-Bus socket, and elevated network permissions so that `nmcli networking off` can control the host NetworkManager. Review this trust boundary before deploying it.
 
 ---
 
@@ -84,12 +97,12 @@ In environments where internet data is limited or expensive, it’s easy to lose
 
 ---
 
-## Roadmap
+## Operational notes
 
-* [ ] CLI arguments (`--limit`, `--interface`)
-* [ ] Daily/weekly reset support
-* [ ] Multi-interface support
-* [ ] Better systemd integration
+- Run on Linux with NetworkManager installed.
+- Replace `eth0` with the real interface from `ip link`.
+- The service exits with code `2` after disabling networking and with code `0` when usage is below the cap.
+- Containerized operation requires host networking and privileged network control; a native systemd installation has a smaller attack surface.
 
 ---
 

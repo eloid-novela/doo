@@ -1,0 +1,11 @@
+.git
+.github
+build
+build-check
+Build
+build-*
+CMakeFiles
+Testing
+*.log
+*.tmp
+.env

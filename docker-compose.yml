@@ -1,0 +1,14 @@
+services:
+  doo:
+    build:
+      context: .
+    container_name: doo
+    restart: unless-stopped
+    command: ["--config", "/etc/doo/doo.json"]
+    volumes:
+      - ./configs:/etc/doo:ro
+      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    privileged: true

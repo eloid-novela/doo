@@ -1,0 +1,6 @@
+{
+  "limit_gb": 5,
+  "period": "monthly",
+  "interface": "eth0",
+  "poll_interval_seconds": 60
+}

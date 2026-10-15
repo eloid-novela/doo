@@ -5,6 +5,6 @@ namespace doo
 class NetworkController
 {
 public:
-    void disable();
+    bool disable(const char*);
 };
 }

@@ -1,0 +1,6 @@
+{
+    "limit_gb": 0.02,
+    "interface": "wlp2s0",
+    "period": "daily",
+    "poll_interval_seconds": 1.2 
+}

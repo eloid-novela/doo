@@ -9,7 +9,7 @@ add_rules(
 -- )
 
 target("doo")
-    set_languages("c++23")
+    set_languages("c++20")
     set_kind("binary")
     add_includedirs("include")
     add_cxxflags("-Wall", "-Wextra", "-Wpedantic")
@@ -21,9 +21,9 @@ target("doo")
     --     "gtest"
     -- )
 
-    -- after_build(function (target)
-    --     os.cp("examples/*", path.join(target:targetdir()))
-    -- end)
+    after_build(function (target)
+        os.cp("resources/*", path.join(target:targetdir()))
+    end)
 
     -- after_build(function (target)
     --     os.cp("tests/", path.join(target:targetdir()))

@@ -4,6 +4,7 @@
 #include <regex>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 namespace doo
 {
@@ -43,13 +44,26 @@ std::uint64_t read_number(const std::string& json, const std::string& key)
     }
     return std::stoull(match[1].str());
 }
+
+std::float_t read_float(const std::string& json, const std::string& key)
+{
+    const std::regex expression("\\\"" + key + "\\\"\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)");
+    std::smatch match;
+
+    if (!std::regex_search(json, match, expression))
+    {
+        throw std::runtime_error("Missing configuration field: " + key);
+    }
+
+    return std::stof(match[1].str());
+}
 }
 
 Config Config::load(const std::string& path)
 {
     const auto json = read_file(path);
     Config config{
-        .limit_gb = read_number(json, "limit_gb"),
+        .limit_gb = read_float(json, "limit_gb"),
         .period = read_string(json, "period"),
         .interface = read_string(json, "interface"),
         .poll_interval_seconds = static_cast<std::uint32_t>(read_number(json, "poll_interval_seconds"))

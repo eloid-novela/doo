@@ -40,7 +40,7 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ````
 
-The binary is written to `build/doo` (or `build/doo.exe` on Windows). Network statistics and NetworkManager integration require Linux.
+The binary is written to `build/doo`. Network statistics and NetworkManager integration require Linux.
 
 ---
 

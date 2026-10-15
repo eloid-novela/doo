@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <cstdint>
 #include <string>
 
@@ -7,7 +8,7 @@ namespace doo
 {
 struct Config
 {
-    std::uint64_t limit_gb;
+    std::float_t limit_gb;
     std::string period;
     std::string interface;
     std::uint32_t poll_interval_seconds;

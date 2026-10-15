@@ -26,6 +26,7 @@ int app::run(int argc, char** argv)
         }
         else if (argument == "--config" && index + 1 < argc)
         {
+
             config_path = argv[++index];
         }
         else if (argument == "--help")
@@ -50,7 +51,7 @@ int app::run(int argc, char** argv)
         if (limiter.limit_reached())
         {
             Logger::warn("Data limit reached. Disabling network...");
-            net.disable();
+            net.disable(config.interface.c_str());
             return 2;
         }
 
